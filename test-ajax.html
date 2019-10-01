@@ -19,6 +19,13 @@
         <p>Status</p>
         <p id="status"></p>
     </div>
+
+    <div>
+        <h1>Generado por JS</h1>
+        <ul id="lista-dinamica">
+
+        </ul>
+    </div>
 </body>
 <script>
    function Actualizar(){
@@ -26,24 +33,50 @@
         datos.onreadystatechange = function(){
             if ( this.readyState == 4 && this.status == 200 ){
                 document.getElementById('status').innerHTML = this.status;
-                respuesta = JSON.parse(datos.responseText);
+               
+               var respuesta = JSON.parse(datos.responseText);
 
                 document.getElementById('nombre').innerHTML = respuesta.employees[0].name;
                 document.getElementById('edad').innerHTML = respuesta.employees[0].age;
                 document.getElementById('job').innerHTML = respuesta.employees[0].job;
-                console.log(status);
+                console.log(this.status);
                 console.log(respuesta);
+                
+                CrearLista(respuesta);
             }
         }
 
        datos.open( 'get', 'objeto-generico.json', true );
        datos.send();
+
+       return 0;
+   }
+
+   function CrearLista(respuesta){
+    
+
+        //var padre = 
+        var textContent, lista,
+            padre = document.getElementById('lista-dinamica');
+        
+        var respuestaLength = respuesta.employees.length;
+        console.log(respuestaLength);
+
+        for( var i = 0; i < respuestaLength; i ++ ){
+            
+            textContent = document.createTextNode( respuesta.employees[i].name );
+            lista = document.createElement('li');
+            lista.appendChild(textContent);
+            padre.appendChild(lista);
+        }
    }
 
    var boton = document.getElementById('boton');
    boton.addEventListener('click', function(){ 
        Actualizar();
+
        });
 
 </script>
+
 </html>
