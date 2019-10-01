@@ -1,0 +1,37 @@
+{
+    "employees" : [
+        
+        {
+        "name":"paulo",
+        "age":30,
+        "job":"programmer"
+        },
+        {
+        "name":"gabriella",
+        "age":23,
+        "job":"architect"
+        },
+        {
+        "name":"felipe",
+        "age":40,
+        "job":"enginner"
+        },
+        {
+        "name":"sophia",
+        "age":31,
+        "job":"physician"
+        },
+        {
+        "name":"robert",
+        "age":19,
+        "job":"trainee"
+        },
+        {
+        "name":"john",
+        "age":60,
+        "job":"manager"
+        }
+        
+    ]
+
+}

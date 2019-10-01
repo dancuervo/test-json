@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Test AJAX</title>
+</head>
+<body>
+    <div>
+        <h1>JSON</h1>
+        <button id="boton">Actualizar</button>
+        <p>Nombre:</p>
+        <p id="nombre"></p>
+        <p>Edad</p>
+        <p id="edad"></p>
+        <p>Funcion</p>
+        <p id="job"></p>
+        <p>Status</p>
+        <p id="status"></p>
+    </div>
+</body>
+<script>
+   function Actualizar(){
+        var datos = new XMLHttpRequest;
+        datos.onreadystatechange = function(){
+            if ( this.readyState == 4 && this.status == 200 ){
+                document.getElementById('status').innerHTML = this.status;
+                respuesta = JSON.parse(datos.responseText);
+
+                document.getElementById('nombre').innerHTML = respuesta.employees[0].name;
+                document.getElementById('edad').innerHTML = respuesta.employees[0].age;
+                document.getElementById('job').innerHTML = respuesta.employees[0].job;
+                console.log(status);
+                console.log(respuesta);
+            }
+        }
+
+       datos.open( 'get', 'objeto-generico.json', true );
+       datos.send();
+   }
+
+   var boton = document.getElementById('boton');
+   boton.addEventListener('click', function(){ 
+       Actualizar();
+       });
+
+</script>
+</html>
