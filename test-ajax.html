@@ -56,13 +56,15 @@
     
 
         //var padre = 
-        var textContent, lista,
+        var i,
+            respuestaLength,
+            textContent,
+            lista;
             padre = document.getElementById('lista-dinamica');
         
-        var respuestaLength = respuesta.employees.length;
-        console.log(respuestaLength);
+        respuestaLength = respuesta.employees.length;
 
-        for( var i = 0; i < respuestaLength; i ++ ){
+        for( i = 0; i < respuestaLength; i ++ ){
             
             textContent = document.createTextNode( respuesta.employees[i].name );
             lista = document.createElement('li');
