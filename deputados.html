@@ -74,12 +74,12 @@
     //funcion MAIN
     function Controlador(){
         console.log('controlador iniciado. Definiendo variables');
-        let camaraFederal = 'camaraFederal';
-        let funcion;
+       // nombre objeto de localStorage
+       
         console.log('llamando getCamaraFederalLocal');
-        getCamaraFederalLocal(camaraFederal, funcion);
-        console.log('llamando preparaDatos');
-        numeroDiputados(camaraFederal);
+        getCamaraFederalLocal();
+        console.log('llamando numeroDiputados');
+        numeroDiputados();
         //arrayPartidos();
         //partidos();
         
@@ -87,32 +87,35 @@
         return;
     }
 
-    function LeeLocalStorage(camaraFederal){
+    function LeeLocalStorage(){
         console.log('recuperando camaraFederal de localStorage');
         
-        return window.localStorage.getItem(camaraFederal);
+        return window.localStorage.getItem('camaraFederal');
     }
 
     function guardaLocalStorage(){
         console.log('guardando camaraFederal en localStorage');
         
-        return window.localStorage.setItem(camaraFederal);
+        return window.localStorage.setItem('camaraFederal');
     }
 
-    function numeroDiputados(camaraFederal){
-            camaraFederal = LeeLocalStorage(camaraFederal)
-            console.log(camaraFederal);
-            camaraFederal = JSON.parse(camaraFederal);
-            camaraFederal.numero_diputados = camaraFederal.deputados.deputado.length;
-
-            console.log('numero_diputados ' + camaraFederal.numero_diputados);
+    function numeroDiputados(){
+            console.log('contando numero_diputados ');
+            let objeto = window.localStorage.getItem('camaraFederal');
+            console.log('contenido de objeto ' + objeto);
+            objeto = JSON.parse(objeto);
+            console.log(objeto);
+            console.log('numero de diputados es '+ objeto.deputados.deputado.length);
+            let numero_diputados = objeto.deputados.deputado.length;
+            objeto.deputados.deputado.push(numero_diputados);
+            
+            console.log('numero_diputados ' + objeto.deputados.deputado.length);
             console.log("JSONParse a camaraFederal en numero_diputados");
             
             //let numero_diputados, partidos, numero_partidos, array_partidos;
 
             console.log('Guardando numero diputados');
-            guardaLocalStorage('camaraFederal',camaraFederal);
-            return;
+            return window.localStorage.setItem('camaraFederal',objeto);
         }
 
         function arrayPartidos(myStorage, camaraFederal, numero_diputados){
@@ -156,39 +159,39 @@
 
 
 
-    function getCamaraFederalLocal(camaraFederal, funcion){
-        funcion = "getCamaraFederalLocal";
-        if(LeeLocalStorage(camaraFederal) === null){
+    function getCamaraFederalLocal(){
+        
+        if(LeeLocalStorage('camaraFederal') === null){
             
-            console.log(funcion + ' entrada camaraFederal no existe en localStorage. llamando getCamaraFederalRemota');
-            getCamaraFederalRemota(camaraFederal, funcion);
+            console.log(' entrada camaraFederal no existe en localStorage. llamando getCamaraFederalRemota');
+            getCamaraFederalRemota();
 
         } else {
             
-            console.log(funcion + ' entrada camaraFederal encontrada!');
-            return;
+            return console.log(' entrada camaraFederal encontrada!');
+            
         }
         
     }
 
     //recupera detalles de diputados camara federal en el servidor GITHUB y almacena em localStorage
-    function getCamaraFederalRemota(camaraFederal, funcion){
-        funcion = "AJAX";
+    function getCamaraFederalRemota(){
+        
         let xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let myObj = JSON.parse(this.responseText);
-            console.log(funcion + ' Status AJAX' + this.status);
+            console.log(' Status AJAX' + this.status);
 
             myObj = JSON.stringify(myObj);
 
-            window.localStorage.setItem(camaraFederal,myObj);
+            window.localStorage.setItem('camaraFederal',myObj);
 
-            getCamaraFederalLocal(camaraFederal, funcion);
+            getCamaraFederalLocal();
         
         
         } else {
-            console.log(funcion + ' Requisición AJAX falló con status: ' + this.status);
+            console.log(' Requisición AJAX falló con status: ' + this.status);
         };
         }
         xmlhttp.open("GET", "https://raw.githubusercontent.com/dancuervo/palantir/master/archivo/archivado.JSON", true);
