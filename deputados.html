@@ -60,42 +60,135 @@
 /*
     1 - busca en localStorage
     2 - busca en servidor
-        2.1 almacena en localStorage
+        2.1 almacena en localStorage un objeto deputados con el contenido del JSON
+    3 - procesamiento
+        3.1 organiza datos crea objeto 'camaraFederal' con
+            detalles diputados
+            numero de diputados
+            lista de diputados
+            numero de partidos
+            lista de partidos
     
     
 */
-
-    function CheckDeputados(){
-        let myStorage = window.localStorage;
-        let deputados;
-
-        if(localStorage.getItem('deputados')){
-            
-            console.log('fetching localStorage');
-
-            deputados = myStorage.getItem('deputados');
-            Chart();
+    //funcion MAIN
+    function Controlador(){
+        console.log('controlador iniciado. Definiendo variables');
+        let camaraFederal = 'camaraFederal';
+        let funcion;
+        console.log('llamando getCamaraFederalLocal');
+        getCamaraFederalLocal(camaraFederal, funcion);
+        console.log('llamando preparaDatos');
+        numeroDiputados(camaraFederal);
+        //arrayPartidos();
+        //partidos();
         
-
-        } else {
-            console.log('No data found in localStorage');
-            
-            StorageDeputados(myStorage, deputados);
-        }
+        console.log("Éxito! Datos almacenados y preparados!")
+        return;
     }
 
-    function StorageDeputados(myStorage, deputados){
+    function LeeLocalStorage(camaraFederal){
+        console.log('recuperando camaraFederal de localStorage');
+        
+        return window.localStorage.getItem(camaraFederal);
+    }
 
+    function guardaLocalStorage(){
+        console.log('guardando camaraFederal en localStorage');
+        
+        return window.localStorage.setItem(camaraFederal);
+    }
+
+    function numeroDiputados(camaraFederal){
+            camaraFederal = LeeLocalStorage(camaraFederal)
+            console.log(camaraFederal);
+            camaraFederal = JSON.parse(camaraFederal);
+            camaraFederal.numero_diputados = camaraFederal.deputados.deputado.length;
+
+            console.log('numero_diputados ' + camaraFederal.numero_diputados);
+            console.log("JSONParse a camaraFederal en numero_diputados");
+            
+            //let numero_diputados, partidos, numero_partidos, array_partidos;
+
+            console.log('Guardando numero diputados');
+            guardaLocalStorage('camaraFederal',camaraFederal);
+            return;
+        }
+
+        function arrayPartidos(myStorage, camaraFederal, numero_diputados){
+            array_partidos = [];
+            
+            console.log("recuperando datos en arrayPartidos");
+            camaraFederal = myStorage.getItem('camaraFederal');
+            console.log("JSONParse a camaraFederal en arrayPartidos");
+            camaraFederal = JSON.parse(camaraFederal);
+
+            for( var i; i < numero_diputados; i ++ ){
+                array_partidos.push( camaraFederal.deputados.deputados.deputado[i].partido );
+            }
+            camaraFederal.array_partidos = array_partidos;
+            console.log('Guardando arraypartidos');
+            myStorage.setItem('camaraFederal');
+            return;
+        };
+
+        function partidos(myStorage, camaraFederal){
+            let array_partidos, partidos;
+            array_partidos = myStorage.getItem('camaraFederal_array_partidos');
+            array_partidos = JSON.parse(array_partidos);
+            arrL = array_partidos.length;
+            partidos = [];
+
+            for( let i = 0; arrL; i ++){
+
+                if(!partidos.includes(array_partidos[i])){
+                    partidos.push(array_partidos[i]);
+                } 
+            }
+            return;
+        }
+
+    //numero_diputados total diputados obtenido de camaraFederal.deputados.deputado.length
+        // partidos, numero_partidos, array_partidos;
+
+        
+
+
+
+
+    function getCamaraFederalLocal(camaraFederal, funcion){
+        funcion = "getCamaraFederalLocal";
+        if(LeeLocalStorage(camaraFederal) === null){
+            
+            console.log(funcion + ' entrada camaraFederal no existe en localStorage. llamando getCamaraFederalRemota');
+            getCamaraFederalRemota(camaraFederal, funcion);
+
+        } else {
+            
+            console.log(funcion + ' entrada camaraFederal encontrada!');
+            return;
+        }
+        
+    }
+
+    //recupera detalles de diputados camara federal en el servidor GITHUB y almacena em localStorage
+    function getCamaraFederalRemota(camaraFederal, funcion){
+        funcion = "AJAX";
         let xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let myObj = JSON.parse(this.responseText);
-            console.log(this.status);
+            console.log(funcion + ' Status AJAX' + this.status);
 
             myObj = JSON.stringify(myObj);
 
-            deputados = myStorage.setItem('deputados',myObj);
-            Chart();
+            window.localStorage.setItem(camaraFederal,myObj);
+
+            getCamaraFederalLocal(camaraFederal, funcion);
+        
+        
+        } else {
+            console.log(funcion + ' Requisición AJAX falló con status: ' + this.status);
         };
         }
         xmlhttp.open("GET", "https://raw.githubusercontent.com/dancuervo/palantir/master/archivo/archivado.JSON", true);
@@ -103,32 +196,12 @@
         xmlhttp.send();
         console.log('sending request');
     }
-    // CHART SCRIPT
+    // fin function getCamaraFederalRemota
+
+
+    // Inicia CHART SCRIPT
     function Chart(){
         
-        if(! window.localStorage.getItem('deputados')){
-            
-            CheckDeputados();
-
-        } else {
-            console.log('recuperando json');
-            //carga JSON 'deputados' y crea chart
-            var deputados = window.localStorage.getItem('deputados');
-            deputados = JSON.parse(deputados);
-            //console.log('json recuperado ' + deputados.deputados.deputado[0].condicao);
-            
-            //estrutura datos del JSON deputados
-            
-            var i, num_deputados, partidos,
-            total_deputados = deputados.deputados.deputado.length;
-            function fun_total_deputados(){
-                document.getElementById('total_deputados').innerHTML = total_deputados;
-            }
-
-            fun_total_deputados();
-                    
-            console.log( 'total deputados ' + total_deputados );
-
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart']});
 
@@ -161,12 +234,11 @@
         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         chart.draw(data, options);
         }
-        }
-
     }
+    //fin function Chart
 
-CheckDeputados();    
 
+Controlador();
 
 </script>
 
