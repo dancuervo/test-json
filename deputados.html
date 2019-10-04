@@ -21,13 +21,19 @@
     <div class="container">
         <!--BLOQUE 1-->
         <div class="row">
-            <div class="twelve columns">
+            <div class="eight columns">
                 <h1>
                         Câmara de Deputados
                 </h1>
             </div>
+            <div class="four columns">
+                <button id="deputados">
+                    Atualizar
+            </button>
+            </div>
         </div>
         <!--FIN BLOQUE 1-->
+        <hr>
         <!--BLOQUE 2-->
         <div class="row">
             <div class="four columns">
@@ -187,8 +193,7 @@
 
             window.localStorage.setItem('camaraFederal',myObj);
 
-            getCamaraFederalLocal();
-        
+            getCamaraFederalLocal(); 
         
         } else {
             console.log(' Requisición AJAX falló con status: ' + this.status);
